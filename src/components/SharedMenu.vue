@@ -1,26 +1,27 @@
 <template>
   <div class="nav">
-    <img src="https://i.ibb.co/82CRqLC/Logo-Colour-1-PNG.png" style="
-    width: 93px;
-    position: absolute;
-    left: 129px;
-    top: 37px;
-    opacity: 1;
-    /* display: none; */
-">
     <ul class="nav__list">
         <li v-for="item in menuItems" :key="item.title" class="nav__list-item">
-          <router-link :to="item.link" class="nav__list-link">
-          <template v-for="letter in item.title">
-            <span :key="letter" v-if="letter === 'i'" class="nav__list-red-dot">i</span>
-            <template v-else>{{ letter }}</template>
-          </template>
+          <router-link v-if="!item.outgoing" :to="item.link" class="nav__list-link">
+            <template v-for="letter in item.title">
+              <span :key="letter" v-if="letter === 'i'" class="nav__list-red-dot">i</span>
+              <template v-else>{{ letter }}</template>
+            </template>
           </router-link>
-          <ul class="nav__sub-list">
+          <a v-else :href="item.link" target="_blank" class="nav__list-link">
+            <template v-for="letter in item.title">
+              <span :key="letter" v-if="letter === 'i'" class="nav__list-red-dot">i</span>
+              <template v-else>{{ letter }}</template>
+            </template>
+          </a>
+          <ul class="nav__sub-list" v-if="item.subItems && item.subItems.length">
             <li class="nav__sub-list-item" v-for="subItem in item.subItems" :key="subItem.title">
-                <router-link :to="subItem.link" class="nav__sub-list-link">
+                <router-link v-if="!subItem.outgoing" :to="subItem.link" class="nav__sub-list-link">
                   {{ subItem.title }}
                 </router-link>
+                <a v-else :href="subItem.link" target="_blank" class="nav__sub-list-link">
+                  {{ subItem.title }}
+                </a>
               </li>
           </ul>
         </li>
@@ -40,7 +41,7 @@ export default {
   mounted() {
     $('.nav').mouseenter(() => {
       $('.nav__list').stop().animate({
-        width: '646px',
+        width: '750px',
       }, 1000, () => {
         $('.nav').addClass('nav--active');
       });
@@ -48,7 +49,7 @@ export default {
 
     $('.nav').mouseleave(() => {
       $('.nav__list').stop().animate({
-        width: '54px',
+        width: '80px',
       }, 1000, () => {
         $('.nav').removeClass('nav--active');
       });
@@ -101,13 +102,10 @@ export default {
   padding: 0;
   margin: 0;
   list-style: none;
-  width: 54px;
-  height: 32px;
+  width: 80px;
+  height: 30px;
+  letter-spacing: 0px;
   overflow:hidden;
-}
-
-.nav {
-  font-weight: bold;
 }
 
 /* .nav:hover .nav__list:hover {
@@ -134,7 +132,7 @@ export default {
   display: block;
   color: #606062;
   font-size: 26px;
-  line-height: 32px;
+  line-height: 30px;
   text-decoration: none;
   transition:0.3s all ease;
 }
@@ -163,11 +161,16 @@ export default {
 }
 
 .nav__sub-list {
+  background: white;
+  min-width: calc(100% + 2px);
   position: absolute;
   top: 100%;
-  left: 10px;
+  left: -1px;
   list-style: none;
-  padding: 0;
+  padding: 2px 10px;
+  border: 1px solid #ec3235;
+  border-top: none;
+  border-right: none;
   margin: 0;
   opacity:0;
   visibility: hidden;
